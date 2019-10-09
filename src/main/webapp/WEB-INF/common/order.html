@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>订单管理</title>
+	<link rel="stylesheet" href="../static/css/amazeui.min.css" />
+	<link rel="stylesheet" href="../static/css/admin.css" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.1.0/css/bootstrap.min.css">
+	<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://cdn.bootcss.com/popper.js/1.12.5/umd/popper.min.js"></script>
+	<script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+        //加载页面时赋值
+        $(function(){
+            /*https://download.csdn.net/download/a861020/6905091   路径getUrl.js */
+            var urlParams = new URLSearchParams(window.location.search);
+            var userId = urlParams.get('userId'); // ?id=123
+            var gId = urlParams.get('gId'); // ?id=123
+            $("#userId").val(userId);
+            $("#gId").val(gId);
+            $.ajax({
+                "data":{gId:gId},
+                "url":"selectById",
+                success:function(info){
+                    if(info.data!=null){
+                        for (var i in info) {
+                            $("#gId").val(info[i].gId);
+                            $("#title").val(info[i].title);
+                            $("#pic").val(info[i].pic);
+                            $("#name").val(info[i].name);
+                            $("#address").val(info[i].address);
+                            $("#goAddress").val(info[i].goAddress);
+                            $("#newPrice").val(info[i].newPrice);
+                            $("#longTime").val(info[i].longTime);
+                        }
+                    }
+                },
+                "dataType":"json"
+            });
+
+
+            $("#but").click(function () {
+                alert("点击了");
+                var oName = $("#name").val();
+                var userId=$("#userId").val();
+                var goodsId=$("#gId").val();
+                var updateinfo ={
+                    oName:oName,
+					userId:userId,
+                    goodsId:goodsId,
+                }
+                $.ajax({
+                    "data":updateinfo,
+                    "url":"/order/submitOrder",
+                    success:function(data){
+                        console.log(data);
+                        if(data.state==1){
+                           alert("购买成功！")
+                        }else {
+                            alert("购买失败!");
+                        }
+                    },
+                    "dataType":"json"
+                })
+            })
+        });
+	</script>
+</head>
+
+<body>
+<form action="">
+<input type="hidden" id="userId">
+	<input type="text" id="gId">
+	<input type="text" id="pic">
+	<input type="text" id="name">
+	<input type="text" id="address">
+	<input type="text" id="goAddress">
+	<input type="text" id="newPrice">
+	<input type="text" id="longTime">
+	<a class="btn btn-primary" id="but">提交订单</a>
+</form>
+</body>
+</html>
